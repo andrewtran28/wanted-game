@@ -1,0 +1,35 @@
+#canvas {
+  border: 1px solid red;
+  position: relative;
+  /* background-image: "/grass_summer.png"; */
+}
+
+.icon {
+  /* border: 1px solid green; */
+  position: absolute;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-drag: none;
+}
+
+button {
+  margin-right: 10px;
+  padding: 10px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.btn-random {
+  background-color: blue;
+}
+
+.btn-target {
+  background-color: green;
+}
+
+.btn-reset {
+  background-color: red;
+}
