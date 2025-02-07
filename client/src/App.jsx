@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import { GameProvider } from "./hooks/GameContext";
 import Game from "./pages/Game";
 import "./App.css";
 
@@ -9,7 +10,15 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/game" element={<Game />} />
+
+          <Route
+            path="/game"
+            element={
+              <GameProvider>
+                <Game />
+              </GameProvider>
+            }
+          />
         </Routes>
       </Router>
     </>

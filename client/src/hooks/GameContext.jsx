@@ -4,7 +4,7 @@ import React, { createContext, useState, useContext } from "react";
 const GameContext = createContext();
 
 // Create the provider component
-const GameProvider = ({ children }) => {
+export const GameProvider = ({ children }) => {
   const [icons, setIcons] = useState([]);
   const [target, setTarget] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,8 +37,6 @@ const GameProvider = ({ children }) => {
 };
 
 // Custom hook to use game context
-const useGameContext = () => {
+export const useGameContext = () => {
   return useContext(GameContext);
 };
-
-export { GameProvider, useGameContext };

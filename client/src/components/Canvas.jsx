@@ -1,8 +1,10 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useGameContext } from "../hooks/GameContext";
 import "../styles/Canvas.css";
 
-function Canvas({ icons, setTimeLeft, iconWidth, iconHeight, canvasSize, resetCanvas, setIsPaused }) {
+function Canvas({ resetCanvas, iconWidth, iconHeight, canvasSize }) {
+  const { icons, setTimeLeft, setIsPaused } = useGameContext();
+
   const [highlightedTarget, setHighlightedTarget] = useState(null);
 
   const handleCanvasClick = (event) => {

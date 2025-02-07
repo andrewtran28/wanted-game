@@ -1,19 +1,28 @@
 import { v4 as uuidv4 } from "uuid";
 import { useState, useEffect } from "react";
+import { useGameContext } from "../hooks/GameContext";
 import Scoreboard from "../components/Scoreboard";
 import Canvas from "../components/Canvas"; // Import the Canvas component
 import "../styles/Canvas.css";
 
 function Game() {
-  const [icons, setIcons] = useState([]);
-  const [target, setTarget] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [iconQueue, setIconQueue] = useState([]);
-  const [points, setPoints] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30.0); // Timer starts at 30.00 seconds
-
-  const [isPaused, setIsPaused] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  const {
+    icons,
+    setIcons,
+    target,
+    setTarget,
+    loading,
+    setLoading,
+    iconQueue,
+    setIconQueue,
+    setPoints,
+    timeLeft,
+    setTimeLeft,
+    isPaused,
+    setIsPaused,
+    gameStarted,
+    setGameStarted,
+  } = useGameContext(); // Using context to access game state
 
   const iconWidth = 75;
   const iconHeight = 78 / (107 / iconWidth);
@@ -32,7 +41,7 @@ function Game() {
 
   useEffect(() => {
     setTarget(selectTarget());
-  }, []);
+  }, [setTarget]);
 
   useEffect(() => {
     if (timeLeft <= 0 || isPaused || !gameStarted) return;
@@ -159,28 +168,14 @@ function Game() {
         </button>
       )}
 
-      <Scoreboard points={points} timeLeft={timeLeft} target={target} resetCanvas={resetCanvas} imgArr={imgArr} />
+      <Scoreboard imgArr={imgArr} resetCanvas={resetCanvas} />
 
       {loading ? (
         <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
           Loading..
         </div>
       ) : (
-        <Canvas
-          icons={icons}
-          setTimeLeft={setTimeLeft}
-          canvasSize={canvasSize}
-          iconWidth={iconWidth}
-          iconHeight={iconHeight}
-          resetCanvas={resetCanvas}
-          target={target}
-          setIsPaused={setIsPaused}
-          setTarget={setTarget}
-          imgArr={imgArr}
-          randomExcluding={randomExcluding}
-          setIconQueue={setIconQueue}
-          setLoading={setLoading}
-        />
+        <Canvas resetCanvas={resetCanvas} iconWidth={iconWidth} iconHeight={iconHeight} canvasSize={canvasSize} />
       )}
     </div>
   );
