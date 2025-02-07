@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { useState, useEffect } from "react";
 import Scoreboard from "../components/Scoreboard";
-import Canvas from "../components/Canvas"; // Import the Canvas component
+import Canvas from "../components/Canvas";
+import { imgArr, selectTarget, randomExcluding } from "../utils/randomize";
 import "../styles/Canvas.css";
 
 function Game() {
@@ -11,7 +12,6 @@ function Game() {
   const [iconQueue, setIconQueue] = useState([]);
   const [points, setPoints] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30.0); // Timer starts at 30.00 seconds
-
   const [isPaused, setIsPaused] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
@@ -20,15 +20,6 @@ function Game() {
   const canvasSize = 500;
   const maxAttempts = 250; // Limit attempts to prevent infinite loops
   const OVERLAP_THRESHOLD = 0.5; // Adjust threshold value between 0 and 1
-
-  const imgArr = [
-    "penguins/Aurora.png",
-    "penguins/Wade.png",
-    "penguins/Roald.png",
-    "penguins/Chabwick.png",
-    "penguins/Flo.png",
-    "penguins/Gwen.png",
-  ];
 
   useEffect(() => {
     setTarget(selectTarget());
@@ -49,19 +40,6 @@ function Game() {
     return () => clearInterval(interval);
   }, [timeLeft, isPaused, gameStarted]);
 
-  const selectTarget = () => {
-    return Math.floor(Math.random() * imgArr.length);
-  };
-
-  const randomExcluding = (excludedNum) => {
-    let randomNum;
-    do {
-      randomNum = Math.floor(Math.random() * imgArr.length);
-    } while (randomNum === excludedNum);
-
-    return randomNum;
-  };
-
   const isOverlapping = (x, y) => {
     return icons.some((icon) => {
       const dx = Math.abs(icon.x - x);
@@ -78,7 +56,6 @@ function Game() {
 
         setIconQueue((prevQueue) => prevQueue.slice(1));
 
-        // Check if this was the last icon to be loaded
         if (iconQueue.length === 1) {
           setLoading(false); // All icons have been loaded
         }
@@ -133,54 +110,33 @@ function Game() {
     resetCanvas();
   };
 
-  const gameOver = () => {
-    setPoints(0);
-    return;
-  };
+  // const gameOver = () => {
+  //   setPoints(0);
+  //   return;
+  // };
 
   return (
     <div>
-      {!gameStarted && (
-        <button
-          className="start-button"
-          onClick={startGame}
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            padding: "20px 40px",
-            fontSize: "24px",
-            cursor: "pointer",
-            zIndex: 1000,
-          }}
-        >
+      {!gameStarted ? (
+        <button className="btn-start" onClick={startGame}>
           Start Game
         </button>
-      )}
-
-      <Scoreboard points={points} timeLeft={timeLeft} target={target} resetCanvas={resetCanvas} imgArr={imgArr} />
-
-      {loading ? (
-        <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
-          Loading..
-        </div>
       ) : (
-        <Canvas
-          icons={icons}
-          setTimeLeft={setTimeLeft}
-          canvasSize={canvasSize}
-          iconWidth={iconWidth}
-          iconHeight={iconHeight}
-          resetCanvas={resetCanvas}
-          target={target}
-          setIsPaused={setIsPaused}
-          setTarget={setTarget}
-          imgArr={imgArr}
-          randomExcluding={randomExcluding}
-          setIconQueue={setIconQueue}
-          setLoading={setLoading}
-        />
+        <>
+          <Scoreboard points={points} timeLeft={timeLeft} target={target} resetCanvas={resetCanvas} imgArr={imgArr} />
+
+          <Canvas
+            icons={icons}
+            canvasSize={canvasSize}
+            iconWidth={iconWidth}
+            iconHeight={iconHeight}
+            loading={loading}
+            setIsPaused={setIsPaused}
+            setTimeLeft={setTimeLeft}
+            scorePoint={() => setPoints((prevPoints) => prevPoints + 1)}
+            nextRound={() => resetCanvas()}
+          />
+        </>
       )}
     </div>
   );

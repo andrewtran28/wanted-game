@@ -1,5 +1,3 @@
-import React from "react";
-
 function Scoreboard({ points, timeLeft, target, resetCanvas, imgArr }) {
   return (
     <div className="game-info">

@@ -1,8 +1,17 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../styles/Canvas.css";
 
-function Canvas({ icons, setTimeLeft, iconWidth, iconHeight, canvasSize, resetCanvas, setIsPaused }) {
+function Canvas({
+  icons,
+  iconWidth,
+  iconHeight,
+  canvasSize,
+  setIsPaused,
+  loading,
+  setTimeLeft,
+  scorePoint,
+  nextRound,
+}) {
   const [highlightedTarget, setHighlightedTarget] = useState(null);
 
   const handleCanvasClick = (event) => {
@@ -21,8 +30,9 @@ function Canvas({ icons, setTimeLeft, iconWidth, iconHeight, canvasSize, resetCa
 
     if (clickedTarget) {
       highlightTarget(clickedTarget.id);
+      scorePoint();
     } else {
-      setTimeLeft((prevTime) => Math.max(0, prevTime - 5)); // Penalize wrong click
+      setTimeLeft((prev) => Math.max(0, prev - 5));
     }
   };
 
@@ -32,11 +42,19 @@ function Canvas({ icons, setTimeLeft, iconWidth, iconHeight, canvasSize, resetCa
 
     setTimeout(() => {
       setHighlightedTarget(null); // Remove highlight
-      resetCanvas();
+      nextRound();
     }, 2000);
 
     setTimeout(() => setTimeLeft((prevTime) => prevTime + 2), 250);
   };
+
+  if (loading) {
+    return (
+      <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div
