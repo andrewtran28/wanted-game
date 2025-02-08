@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/Canvas.css";
 
 function Canvas({
@@ -13,8 +13,14 @@ function Canvas({
   nextRound,
 }) {
   const [highlightedTarget, setHighlightedTarget] = useState(null);
-
+  const [clickDisabled, setClickDisabled] = useState(false);
+  const [missedClick, setMissedClick] = useState(false);
   const handleCanvasClick = (event) => {
+    if (clickDisabled) return;
+
+    setClickDisabled(true);
+    setTimeout(() => setClickDisabled(false), 2000); //Click cool down time
+
     const rect = event.currentTarget.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
     const clickY = event.clientY - rect.top;
@@ -29,19 +35,21 @@ function Canvas({
     );
 
     if (clickedTarget) {
+      setMissedClick(false);
       highlightTarget(clickedTarget.id);
       scorePoint();
     } else {
-      setTimeLeft((prev) => Math.max(0, prev - 5));
+      setMissedClick(true);
+      setTimeLeft((prev) => Math.max(0, prev - 3)); //Misclick time penalize.
     }
   };
 
   const highlightTarget = (targetId) => {
-    setIsPaused(true); // Pause timer
-    setHighlightedTarget(targetId); // Highlight clicked target
+    setIsPaused(true);
+    setHighlightedTarget(targetId);
 
     setTimeout(() => {
-      setHighlightedTarget(null); // Remove highlight
+      setHighlightedTarget(null);
       nextRound();
     }, 2000);
 
@@ -63,6 +71,8 @@ function Canvas({
       style={{
         width: canvasSize,
         height: canvasSize,
+        pointerEvents: clickDisabled ? "none" : "auto",
+        opacity: clickDisabled && missedClick ? 0.75 : 1,
       }}
     >
       {icons.map((icon) => (
