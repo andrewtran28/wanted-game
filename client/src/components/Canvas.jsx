@@ -1,17 +1,7 @@
 import { useState, useEffect } from "react";
 import "../styles/Canvas.css";
 
-function Canvas({
-  icons,
-  iconWidth,
-  iconHeight,
-  canvasSize,
-  setIsPaused,
-  loading,
-  setTimeLeft,
-  scorePoint,
-  nextRound,
-}) {
+function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading, setTimeLeft, nextRound }) {
   const [highlightedTarget, setHighlightedTarget] = useState(null);
   const [clickDisabled, setClickDisabled] = useState(false);
   const [missedClick, setMissedClick] = useState(false);
@@ -37,7 +27,6 @@ function Canvas({
     if (clickedTarget) {
       setMissedClick(false);
       highlightTarget(clickedTarget.id);
-      scorePoint();
     } else {
       setMissedClick(true);
       setTimeLeft((prev) => Math.max(0, prev - 3)); //Misclick time penalize.

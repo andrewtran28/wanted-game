@@ -1,4 +1,4 @@
-function Scoreboard({ points, timeLeft, target, resetCanvas, imgArr }) {
+function Scoreboard({ level, timeLeft, target, resetCanvas, imgArr }) {
   return (
     <div className="game-info">
       {target !== null && (
@@ -8,11 +8,11 @@ function Scoreboard({ points, timeLeft, target, resetCanvas, imgArr }) {
         </div>
       )}
       <div className="game-scoreboard">
-        <span>Points: {points}</span>
-        <span>Time: {timeLeft.toFixed(1)}</span>
-        <button className="btn-reset" onClick={resetCanvas}>
+        <h2>Level: {level}</h2>
+        <h2>Time: {timeLeft.toFixed(1)}</h2>
+        {/* <button className="btn-reset" onClick={resetCanvas}>
           Reset Canvas
-        </button>
+        </button> */}
       </div>
     </div>
   );

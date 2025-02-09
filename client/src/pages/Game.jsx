@@ -4,6 +4,7 @@ import Scoreboard from "../components/Scoreboard";
 import Canvas from "../components/Canvas";
 import GameOverModal from "../components/GameOverModal"; // Import the Modal component
 import { imgArr, selectTarget, randomExcluding } from "../utils/randomize";
+import difficulty from "../utils/difficulty";
 import "../styles/Canvas.css";
 
 function Game() {
@@ -11,18 +12,17 @@ function Game() {
   const [target, setTarget] = useState(null);
   const [loading, setLoading] = useState(false);
   const [iconQueue, setIconQueue] = useState([]);
-  const [points, setPoints] = useState(0);
+  const [level, setLevel] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30.0);
   const [isPaused, setIsPaused] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
 
-  const iconWidth = 75;
+  const { iconWidth, iconNum, overlapThreshold } = difficulty(level);
+
   const iconHeight = 78 / (107 / iconWidth);
   const canvasSize = 500;
-  const maxAttempts = 250; // Limit attempts to prevent infinite loops
-  let iconNum = 100; //Number of icons to try and fill canvas
-  const OVERLAP_THRESHOLD = 0.5; // Adjust threshold value between 0 and 1
+  const maxAttempts = 250;
 
   useEffect(() => {
     setTarget(selectTarget());
@@ -75,7 +75,7 @@ function Game() {
     return icons.some((icon) => {
       const dx = Math.abs(icon.x - x);
       const dy = Math.abs(icon.y - y);
-      return dx < iconWidth * OVERLAP_THRESHOLD && dy < iconHeight * OVERLAP_THRESHOLD;
+      return dx < iconWidth * overlapThreshold && dy < iconHeight * overlapThreshold;
     });
   };
 
@@ -90,7 +90,7 @@ function Game() {
     } while (isOverlapping(x, y) && attempts < maxAttempts);
 
     if (attempts >= maxAttempts) {
-      console.log("No more valid spots available!");
+      console.log(`Level: ${level}: No more valid spots available!`);
     } else {
       const id = uuidv4();
 
@@ -100,20 +100,35 @@ function Game() {
     }
   };
 
+  // const resetCanvas = () => {
+  //   const newTarget = selectTarget();
+  //   setlevel((prevlevel) => prevlevel + 1);
+  //   setTarget(newTarget);
+  //   setIcons([]);
+  //   setLoading(true);
+
+  //   const newQueue = [imgArr[newTarget], ...Array.from({ length: iconNum }, () => imgArr[randomExcluding(newTarget)])];
+  //   setIconQueue(newQueue);
+  // };
+
   const resetCanvas = () => {
+    const newLevel = level + 1; // Calculate next level
+    setLevel(newLevel);
+
+    const { iconWidth, iconNum } = difficulty(newLevel); // Get difficulty for new level
+
     const newTarget = selectTarget();
     setTarget(newTarget);
     setIcons([]);
-    setLoading([false]);
+    setLoading(true);
 
-    // Set length to higher for higher difficulty.
     const newQueue = [imgArr[newTarget], ...Array.from({ length: iconNum }, () => imgArr[randomExcluding(newTarget)])];
     setIconQueue(newQueue);
   };
 
   const startGame = () => {
     setGameStarted(true);
-    setPoints(0);
+    setLevel(1);
     setTimeLeft(30);
     resetCanvas();
   };
@@ -124,6 +139,7 @@ function Game() {
 
   const continueGame = () => {
     setGameStarted(false);
+    setLevel(0);
     setTimeLeft(30); // Reset time to prevent gameOver() from triggering again
     setIsGameOver(false); // Hide the modal
   };
@@ -137,7 +153,7 @@ function Game() {
       ) : (
         <>
           <div className={`canvas-container ${isGameOver ? "canvas-disabled" : ""}`}>
-            <Scoreboard points={points} timeLeft={timeLeft} target={target} resetCanvas={resetCanvas} imgArr={imgArr} />
+            <Scoreboard level={level} timeLeft={timeLeft} target={target} resetCanvas={resetCanvas} imgArr={imgArr} />
 
             <Canvas
               icons={icons}
@@ -147,10 +163,9 @@ function Game() {
               loading={loading}
               setIsPaused={setIsPaused}
               setTimeLeft={setTimeLeft}
-              scorePoint={() => setPoints((prevPoints) => prevPoints + 1)}
               nextRound={() => resetCanvas()}
             />
-            {isGameOver && <GameOverModal score={points} onContinue={continueGame} />}
+            {isGameOver && <GameOverModal score={level} onContinue={continueGame} />}
           </div>
         </>
       )}
