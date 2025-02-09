@@ -10,9 +10,9 @@ function Scoreboard({ level, timeLeft, target, resetCanvas, imgArr }) {
       <div className="game-scoreboard">
         <h2>Level: {level}</h2>
         <h2>Time: {timeLeft.toFixed(1)}</h2>
-        {/* <button className="btn-reset" onClick={resetCanvas}>
+        <button className="btn-reset" onClick={resetCanvas}>
           Reset Canvas
-        </button> */}
+        </button>
       </div>
     </div>
   );

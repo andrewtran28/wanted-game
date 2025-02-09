@@ -1,15 +1,24 @@
 import { useState, useEffect } from "react";
 import "../styles/Canvas.css";
 
-function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading, setTimeLeft, nextRound }) {
+function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading, timeLeft, setTimeLeft, nextRound }) {
   const [highlightedTarget, setHighlightedTarget] = useState(null);
   const [clickDisabled, setClickDisabled] = useState(false);
   const [missedClick, setMissedClick] = useState(false);
+
+  // Highlight target indefinitely if game over
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      const targetIcon = icons.find((icon) => icon.isTarget);
+      if (targetIcon) setHighlightedTarget(targetIcon.id);
+    }
+  }, [timeLeft, icons]);
+
   const handleCanvasClick = (event) => {
     if (clickDisabled) return;
 
     setClickDisabled(true);
-    setTimeout(() => setClickDisabled(false), 2000); //Click cool down time
+    setTimeout(() => setClickDisabled(false), 1250); //Click cool down time
 
     const rect = event.currentTarget.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
@@ -40,7 +49,7 @@ function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading
     setTimeout(() => {
       setHighlightedTarget(null);
       nextRound();
-    }, 2000);
+    }, 1250); //Time until next round
 
     setTimeout(() => setTimeLeft((prevTime) => prevTime + 2), 250);
   };
@@ -76,16 +85,11 @@ function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading
         >
           {highlightedTarget === icon.id && (
             <div
-              className="target-highlight"
+              className={timeLeft <= 0 ? "target-highlight target-fail" : "target-highlight"}
               style={{
                 position: "absolute",
                 width: iconWidth + 10,
-                height: iconHeight + 20,
-                borderRadius: "50%",
-                border: "5px solid lime",
-                top: "-15px",
-                left: "-10px",
-                zIndex: 9,
+                height: iconHeight + 30,
               }}
             />
           )}

@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useState, useEffect } from "react";
 import Scoreboard from "../components/Scoreboard";
 import Canvas from "../components/Canvas";
-import GameOverModal from "../components/GameOverModal"; // Import the Modal component
+import GameOverModal from "../components/GameOverModal";
 import { imgArr, selectTarget, randomExcluding } from "../utils/randomize";
 import difficulty from "../utils/difficulty";
 import "../styles/Canvas.css";
@@ -22,7 +22,6 @@ function Game() {
 
   const iconHeight = 78 / (107 / iconWidth);
   const canvasSize = 500;
-  const maxAttempts = 250;
 
   useEffect(() => {
     setTarget(selectTarget());
@@ -31,7 +30,6 @@ function Game() {
   useEffect(() => {
     if (timeLeft <= 0) {
       gameOver();
-      return;
     }
 
     if (isPaused || !gameStarted) return;
@@ -57,11 +55,11 @@ function Game() {
         setIconQueue((prevQueue) => prevQueue.slice(1));
 
         if (iconQueue.length === 1) {
-          setLoading(false); // All icons have been loaded
+          setLoading(false);
         }
       }, 1);
 
-      return () => clearTimeout(timeout); // Cleanup function to prevent stacking timeouts
+      return () => clearTimeout(timeout);
     }
   }, [iconQueue]);
 
@@ -80,6 +78,7 @@ function Game() {
   };
 
   const addIcon = (imgPath, isTarget) => {
+    const maxAttempts = 250;
     let x, y;
     let attempts = 0;
 
@@ -99,17 +98,6 @@ function Game() {
       });
     }
   };
-
-  // const resetCanvas = () => {
-  //   const newTarget = selectTarget();
-  //   setlevel((prevlevel) => prevlevel + 1);
-  //   setTarget(newTarget);
-  //   setIcons([]);
-  //   setLoading(true);
-
-  //   const newQueue = [imgArr[newTarget], ...Array.from({ length: iconNum }, () => imgArr[randomExcluding(newTarget)])];
-  //   setIconQueue(newQueue);
-  // };
 
   const resetCanvas = () => {
     const newLevel = level + 1; // Calculate next level
@@ -134,7 +122,7 @@ function Game() {
   };
 
   const gameOver = () => {
-    setIsGameOver(true); // Show the modal
+    setTimeout(() => setIsGameOver(true), 1250); // Show the modal
   };
 
   const continueGame = () => {
@@ -162,6 +150,7 @@ function Game() {
               iconHeight={iconHeight}
               loading={loading}
               setIsPaused={setIsPaused}
+              timeLeft={timeLeft}
               setTimeLeft={setTimeLeft}
               nextRound={() => resetCanvas()}
             />
