@@ -4,8 +4,8 @@ import Scoreboard from "../components/Scoreboard";
 import Canvas from "../components/Canvas";
 import GameOverModal from "../components/GameOverModal";
 import Leaderboard from "../components/Leaderboard";
-import { imgArr, selectTarget, randomExcluding } from "../utils/randomize";
 import difficulty from "../utils/difficulty";
+import { imgArr, selectTarget, randomExcluding } from "../utils/randomize";
 import "../styles/Canvas.css";
 
 function Game() {
