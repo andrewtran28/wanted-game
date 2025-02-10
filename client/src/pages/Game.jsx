@@ -20,16 +20,12 @@ function Game() {
   const [gameStarted, setGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
 
-  const { iconWidth, iconNum, overlapThreshold } = difficulty(level);
-
-  const iconHeight = 78 / (107 / iconWidth);
-  const canvasSize = 500;
+  const { iconWidth, iconHeight, overlapThreshold, canvasSize } = difficulty(level);
 
   useEffect(() => {
     if (timeLeft <= 0) {
       gameOver();
     }
-
     if (isPaused || !gameStarted) return;
 
     let startTime = Date.now();
@@ -85,7 +81,7 @@ function Game() {
 
   const nextLevel = useCallback(() => {
     const newLevel = level + 1;
-    const { iconWidth, iconNum } = difficulty(newLevel);
+    const { iconNum } = difficulty(newLevel);
     const newTarget = selectTarget();
     const newQueue = [imgArr[newTarget], ...Array.from({ length: iconNum }, () => imgArr[randomExcluding(newTarget)])];
 
@@ -128,17 +124,15 @@ function Game() {
 
             <Canvas
               icons={icons}
-              canvasSize={canvasSize}
-              iconWidth={iconWidth}
-              iconHeight={iconHeight}
               loading={loading}
+              level={level}
               setIsPaused={setIsPaused}
               timeLeft={timeLeft}
               setTimeLeft={setTimeLeft}
-              setScore={setScore} // Pass setScore to Canvas
+              setScore={setScore}
               nextRound={() => nextLevel()}
             />
-            {isGameOver && <GameOverModal score={level} onContinue={continueGame} />}
+            {isGameOver && <GameOverModal score={score} level={level} onContinue={continueGame} />}
           </div>
         )}
       </div>

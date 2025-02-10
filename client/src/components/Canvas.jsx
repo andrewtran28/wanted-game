@@ -1,24 +1,15 @@
 import { useState, useEffect } from "react";
+import difficulty from "../utils/difficulty";
 import "../styles/Canvas.css";
 
-function Canvas({
-  icons,
-  iconWidth,
-  iconHeight,
-  canvasSize,
-  setIsPaused,
-  loading,
-  timeLeft,
-  setTimeLeft,
-  nextRound,
-  setScore,
-}) {
+function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound, setScore, level }) {
   const [highlightedTarget, setHighlightedTarget] = useState(null);
   const [clickDisabled, setClickDisabled] = useState(false);
   const [missedClick, setMissedClick] = useState(false);
   const [lastRoundTime, setLastRoundTime] = useState(timeLeft);
 
-  // Highlight target indefinitely if game over
+  const { iconWidth, iconHeight, canvasSize, scoreBonus } = difficulty(level);
+
   useEffect(() => {
     if (timeLeft <= 0) {
       const targetIcon = icons.find((icon) => icon.isTarget);
@@ -73,16 +64,17 @@ function Canvas({
     setLastRoundTime(timeLeft);
 
     setTimeout(() => {
-      setTimeLeft((prevTime) => Math.min(30, prevTime + 2)); // Add 2s, ensure max time is 30s
+      setTimeLeft((prevTime) => Math.min(45, prevTime + 2)); // Add 2s, ensure max time is 30s
     }, 250);
   };
 
   const calculateScore = (reactionTime) => {
-    if (reactionTime <= 0.5) return 1000; // Full score for clicks within 0.5s
+    if (reactionTime <= 1) return 1000 * scoreBonus; // Full score for clicks within 1s
 
-    const roundedPenalty = Math.floor(reactionTime * 10) * 10;
-    const score = Math.max(1000 - roundedPenalty, 100);
-    return score;
+    const roundedPenalty = Math.floor(reactionTime * 10) * 7.5;
+    let score = Math.max(1000 - roundedPenalty, 100) * scoreBonus;
+
+    return Math.floor(score / 10) * 10;
   };
 
   if (loading)

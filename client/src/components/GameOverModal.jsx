@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-function GameOverModal({ score, onContinue }) {
+function GameOverModal({ score, level, onContinue }) {
   const [username, setUsername] = useState("");
   const [isTop10, setIsTop10] = useState(false);
 
@@ -43,7 +43,8 @@ function GameOverModal({ score, onContinue }) {
     <div className="game-over-modal">
       <div className="modal-content">
         <h2>Game Over</h2>
-        <p>Your Final Level: {score}</p>
+        <p>Highest Level: {level}</p>
+        <p>Your Score: {score}</p>
 
         {isTop10 ? (
           <>

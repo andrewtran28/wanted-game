@@ -6,7 +6,7 @@ function Scoreboard({ level, timeLeft, target, score }) {
       {target !== null && (
         <div className="target-container">
           <h3>Find this penguin:</h3>
-          <img src={imgArr[target]} alt="Target Icon" className="target-image" style={{ width: 107, height: "auto" }} />
+          <img src={imgArr[target]} alt="Target Icon" className="target-image" />
         </div>
       )}
       <div className="game-scoreboard">
