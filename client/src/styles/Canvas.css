@@ -1,3 +1,15 @@
+#web-layout {
+  border: 1px solid red;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+
+#game-cont {
+  border: 1px solid red;
+  padding: 50px;
+}
+
 #canvas {
   position: relative;
   background-image: url("/grass_winter.png");
@@ -25,16 +37,6 @@
 .game-scoreboard {
   display: flex;
   flex-direction: column;
-}
-
-.icon-random {
-  /* border: 1px solid blue; */
-}
-
-.icon-target {
-  /* border: 3px solid rgb(0, 255, 8); */
-  /* background-color: rgb(0, 255, 8); */
-  /* cursor:pointer; */
 }
 
 button {
@@ -99,4 +101,9 @@ button {
   padding: 20px;
   border-radius: 10px;
   text-align: center;
+}
+
+.leaderboard {
+  align-self: start;
+  min-width: 300px;
 }

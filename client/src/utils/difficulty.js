@@ -10,7 +10,7 @@ function difficulty(level) {
     { range: [25, 29], iconWidth: 75, iconNum: 90, overlapThreshold: 0.5 },
     { range: [30, 39], iconWidth: 70, iconNum: 100, overlapThreshold: 0.45 },
     { range: [40, 49], iconWidth: 65, iconNum: 150, overlapThreshold: 0.45 },
-    { range: [50, Infinity], iconWidth: 60, iconNum: 150, overlapThreshold: 0.4 }, // 35+
+    { range: [50, Infinity], iconWidth: 60, iconNum: 150, overlapThreshold: 0.4 },
   ];
 
   const config = settings.find(({ range }) => level >= range[0] && level <= range[1]) || settings[0];

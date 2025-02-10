@@ -1,10 +1,22 @@
 import { useState, useEffect } from "react";
 import "../styles/Canvas.css";
 
-function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading, timeLeft, setTimeLeft, nextRound }) {
+function Canvas({
+  icons,
+  iconWidth,
+  iconHeight,
+  canvasSize,
+  setIsPaused,
+  loading,
+  timeLeft,
+  setTimeLeft,
+  nextRound,
+  setScore,
+}) {
   const [highlightedTarget, setHighlightedTarget] = useState(null);
   const [clickDisabled, setClickDisabled] = useState(false);
   const [missedClick, setMissedClick] = useState(false);
+  const [lastRoundTime, setLastRoundTime] = useState(timeLeft);
 
   // Highlight target indefinitely if game over
   useEffect(() => {
@@ -13,6 +25,17 @@ function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading
       if (targetIcon) setHighlightedTarget(targetIcon.id);
     }
   }, [timeLeft, icons]);
+
+  const isTargetClicked = (clickX, clickY) => {
+    return icons.find(
+      (icon) =>
+        icon.isTarget &&
+        clickX >= icon.x &&
+        clickX <= icon.x + iconWidth &&
+        clickY >= icon.y &&
+        clickY <= icon.y + iconHeight
+    );
+  };
 
   const handleCanvasClick = (event) => {
     if (clickDisabled) return;
@@ -24,14 +47,7 @@ function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading
     const clickX = event.clientX - rect.left;
     const clickY = event.clientY - rect.top;
 
-    const clickedTarget = icons.find(
-      (icon) =>
-        icon.isTarget &&
-        clickX >= icon.x &&
-        clickX <= icon.x + iconWidth &&
-        clickY >= icon.y &&
-        clickY <= icon.y + iconHeight
-    );
+    const clickedTarget = isTargetClicked(clickX, clickY);
 
     if (clickedTarget) {
       setMissedClick(false);
@@ -49,18 +65,32 @@ function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading
     setTimeout(() => {
       setHighlightedTarget(null);
       nextRound();
-    }, 1250); //Time until next round
+    }, 1250);
 
-    setTimeout(() => setTimeLeft((prevTime) => prevTime + 2), 250);
+    const reactionTime = lastRoundTime - timeLeft; // Time taken to click
+    const pointsEarned = calculateScore(reactionTime);
+    setScore((prevScore) => prevScore + pointsEarned);
+    setLastRoundTime(timeLeft);
+
+    setTimeout(() => {
+      setTimeLeft((prevTime) => Math.min(30, prevTime + 2)); // Add 2s, ensure max time is 30s
+    }, 250);
   };
 
-  if (loading) {
+  const calculateScore = (reactionTime) => {
+    if (reactionTime <= 0.5) return 1000; // Full score for clicks within 0.5s
+
+    const roundedPenalty = Math.floor(reactionTime * 10) * 10;
+    const score = Math.max(1000 - roundedPenalty, 100);
+    return score;
+  };
+
+  if (loading)
     return (
       <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
         Loading...
       </div>
     );
-  }
 
   return (
     <div
@@ -76,21 +106,12 @@ function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading
       {icons.map((icon) => (
         <div
           key={icon.id}
-          style={{
-            position: "absolute",
-            top: icon.y,
-            left: icon.x,
-            zIndex: highlightedTarget === icon.id ? 10 : 1,
-          }}
+          style={{ position: "absolute", top: icon.y, left: icon.x, zIndex: highlightedTarget === icon.id ? 10 : 1 }}
         >
           {highlightedTarget === icon.id && (
             <div
               className={timeLeft <= 0 ? "target-highlight target-fail" : "target-highlight"}
-              style={{
-                position: "absolute",
-                width: iconWidth + 10,
-                height: iconHeight + 30,
-              }}
+              style={{ position: "absolute", width: iconWidth + 10, height: iconHeight + 30 }}
             />
           )}
 
@@ -98,12 +119,7 @@ function Canvas({ icons, iconWidth, iconHeight, canvasSize, setIsPaused, loading
             className={icon.isTarget ? "icon-target" : "icon-random"}
             src={icon.imgPath}
             alt="icon"
-            style={{
-              width: iconWidth,
-              height: "auto",
-              position: "absolute",
-              pointerEvents: "none",
-            }}
+            style={{ width: iconWidth, height: "auto", position: "absolute", pointerEvents: "none" }}
           />
         </div>
       ))}

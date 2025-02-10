@@ -1,4 +1,6 @@
-function Scoreboard({ level, timeLeft, target, resetCanvas, imgArr }) {
+import { imgArr } from "../utils/randomize";
+
+function Scoreboard({ level, timeLeft, target, score }) {
   return (
     <div className="game-info">
       {target !== null && (
@@ -8,11 +10,9 @@ function Scoreboard({ level, timeLeft, target, resetCanvas, imgArr }) {
         </div>
       )}
       <div className="game-scoreboard">
-        <h2>Level: {level}</h2>
-        <h2>Time: {timeLeft.toFixed(1)}</h2>
-        <button className="btn-reset" onClick={resetCanvas}>
-          Reset Canvas
-        </button>
+        <p>Level: {level}</p>
+        <p>Score: {score} </p>
+        <p>Time: {timeLeft.toFixed(1)}</p>
       </div>
     </div>
   );
