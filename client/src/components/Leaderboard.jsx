@@ -24,6 +24,7 @@ function Leaderboard() {
       try {
         const response = await fetch(`${API_BASE_URL}/api/leaderboard`);
         const data = await response.json();
+
         setScores(data);
       } catch (error) {
         console.error("Error fetching leaderboard:", error);
