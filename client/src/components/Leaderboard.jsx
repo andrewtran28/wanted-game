@@ -1,20 +1,7 @@
 import { useState, useEffect } from "react";
+import "../styles/Leaderboard.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-const formatDate = (date) => {
-  if (!date) return "";
-
-  const dateObj = date instanceof Date ? date : new Date(date);
-  if (isNaN(dateObj.getTime())) return "";
-
-  const options = { month: "short" };
-  const month = new Intl.DateTimeFormat("en-US", options).format(dateObj);
-  const day = dateObj.getDate();
-  const year = dateObj.getFullYear();
-
-  return `${month} ${day} ${year}`;
-};
 
 function Leaderboard() {
   const [scores, setScores] = useState([]);
@@ -36,14 +23,26 @@ function Leaderboard() {
   return (
     <div className="leaderboard">
       <h2>Top 10 Leaderboard</h2>
-      <ol>
-        {scores.map((entry, index) => (
-          <li key={index}>
-            <span>{entry.username}</span> - <span>{entry.level}</span> - <span>{entry.score}</span> -{" "}
-            <span>{formatDate(entry.createdAt)}</span>
-          </li>
-        ))}
-      </ol>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Score</th>
+            <th>Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          {scores.map((entry, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{entry.username}</td>
+              <td>{entry.score}</td>
+              <td>{entry.level}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

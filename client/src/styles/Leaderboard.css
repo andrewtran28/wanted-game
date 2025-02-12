@@ -1,0 +1,44 @@
+.leaderboard {
+  width: 100%;
+  min-width: 400px;
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.leaderboard h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard th, .leaderboard td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.leaderboard th {
+  background-color: #282c34;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.leaderboard td {
+  font-size: 1rem;
+}
+
+.btn-fullscreen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 20;
+}

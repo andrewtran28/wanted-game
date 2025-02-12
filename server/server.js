@@ -25,6 +25,8 @@ app.get("/api/leaderboard", async (req, res) => {
 app.post("/api/leaderboard", async (req, res) => {
   try {
     const { username, score, level } = req.body;
+    if (score > 999999999) score = 999999999;
+    if (level > 9999) level = 9999;
 
     if (!username || !score || score < 1) {
       return res.status(400).json({ error: "Invalid data" });

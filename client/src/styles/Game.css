@@ -7,16 +7,12 @@
 
 #game-cont {
   border: 1px solid green;
-  padding: 50px;
+  padding: 0 30px 30px 30px;
   position: relative;
+  font-variant-numeric: tabular-nums;
 }
 
-#canvas {
-  position: relative;
-  background-image: url("/grass_winter.png");
-}
-
-#canvas .icon-random, .icon-target, .canvas-container {
+#game-cont .icon-random, .icon-target, .canvas-container {
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -26,26 +22,60 @@
 
 .icon-random, .icon-target {
   position: absolute;
+  /* border-radius must be 100% for target click accuracy */
   border-radius: 100%;
 }
 
-#game-info {
+#scoreboard {
+  /* border: 1px solid pink; */
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-}
-
-.target-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.game-scoreboard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  width: 100%;
+  max-width: 550px;
   margin-top: 10px;
+}
+
+.scoreboard-target {
+  /* background-color: rgb(120, 162, 192); */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.scoreboard-target img {
+  margin: 10px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.info-time {
+  font-size: 3rem;
+  line-height: 3rem;
+  color: orange;
+  font-weight: 600;
+}
+
+.game-info {
+  /* border: 1px solid red; */
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-info-top {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
 }
 
 button {
@@ -75,11 +105,19 @@ button {
   pointer-events: none; /* Prevent interactions with the canvas */
 }
 
+#canvas {
+  position: relative;
+  background-image: url("/grass_winter.png");
+  border: 25px solid white;
+}
+
 .target-highlight {
   border-radius: 50%;
-  border: 8px solid #3aca3a;
-  top: -20px;
-  left: -12px;
+  border: 8px solid #30a630;
+  /* Calc for icon size of 107x78 px because iconHeight = iconWidth for circle */
+  top: calc(-8px * 2*(107/78));
+  left: -8px;
+  transform: scale(1.1);
   z-index: 9;
 }
 
@@ -89,37 +127,25 @@ button {
 
 .game-over-modal {
   position: absolute;
-  padding: 50px;
-  top: -50px;
-  left: -50px;
+  padding: 20px 30px;
+  top: -10px;
+  left: -30px;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10;
+  z-index: 15;
   pointer-events: all; /* Allow interactions with the modal */
 
 }
 
 .modal-content {
-  /* background-color: white; */
+  background-color: hsla(202, 100%, 50%, 0.75);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
-}
-
-.leaderboard {
-  align-self: start;
-  min-width: 300px;
-}
-
-.btn-fullscreen {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 11;
 }
 
 /* Fullscreen styles */
@@ -167,9 +193,34 @@ button {
   color: white;
   border: none;
   cursor: pointer;
-  z-index: 1000;
+  z-index: 100;
 }
 
 .fullscreen .btn-fullscreen:hover {
   background: rgba(0, 0, 0, 0.9);
+}
+
+/* Time bonus/penalty animations */
+.floating-text {
+  position: absolute;
+  font-size: 2rem;
+  font-weight: bold;
+  animation: floatUp 1s ease-out forwards;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 12;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
 }

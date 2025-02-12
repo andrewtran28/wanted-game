@@ -7,6 +7,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
   const [clickDisabled, setClickDisabled] = useState(false);
   const [missedClick, setMissedClick] = useState(false);
   const [lastRoundTime, setLastRoundTime] = useState(timeLeft);
+  const [floatingTexts, setFloatingTexts] = useState([]); // Floating text state
 
   const { iconWidth, iconHeight, scoreBonus } = difficulty(level);
 
@@ -29,18 +30,15 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
   };
 
   const handleCanvasClick = (event) => {
-    if (clickDisabled) return;
+    if (clickDisabled || timeLeft <= 0) return;
 
     setClickDisabled(true);
     setTimeout(() => setClickDisabled(false), 1250); // Click cooldown time
 
     const rect = event.currentTarget.getBoundingClientRect();
-
-    // Calculate scale factor
     const scaleX = rect.width / canvasSize;
     const scaleY = rect.height / canvasSize;
 
-    // Adjust click position based on scaling
     const clickX = (event.clientX - rect.left) / scaleX;
     const clickY = (event.clientY - rect.top) / scaleY;
 
@@ -48,14 +46,15 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
 
     if (clickedTarget) {
       setMissedClick(false);
-      highlightTarget(clickedTarget.id);
+      highlightTarget(clickedTarget.id, clickX, clickY);
     } else {
       setMissedClick(true);
       setTimeLeft((prev) => Math.max(0, prev - 3)); // Misclick time penalty
+      showFloatingText("-3.0s", clickX, clickY, "red");
     }
   };
 
-  const highlightTarget = (targetId) => {
+  const highlightTarget = (targetId, clickX, clickY) => {
     setIsPaused(true);
     setHighlightedTarget(targetId);
 
@@ -64,23 +63,31 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
       nextRound();
     }, 1250);
 
-    const reactionTime = lastRoundTime - timeLeft; // Time taken to click
+    const reactionTime = lastRoundTime - (level > 1 ? timeLeft - 2 : timeLeft);
     const pointsEarned = calculateScore(reactionTime);
     setScore((prevScore) => prevScore + pointsEarned);
     setLastRoundTime(timeLeft);
 
-    setTimeout(() => {
-      setTimeLeft((prevTime) => Math.min(45, prevTime + 2)); // Add 2s, ensure max time is 30s
-    }, 250);
+    setTimeLeft((prevTime) => Math.min(45, prevTime + 2));
+    showFloatingText(pointsEarned, clickX, clickY, "#3aca3a");
+    showFloatingText("+2.0s", clickX, clickY + 30, "orange");
   };
 
   const calculateScore = (reactionTime) => {
-    if (reactionTime <= 1) return 1000 * scoreBonus; // Full score for clicks within 1s
-
+    console.log(`Level ${level}: Reaction Time: ${reactionTime.toFixed(3)}s`);
+    if (reactionTime <= 1) return 1000 * scoreBonus;
     const roundedPenalty = Math.floor(reactionTime * 10) * 7.5;
     let score = Math.max(1000 - roundedPenalty, 100) * scoreBonus;
-
     return Math.floor(score / 10) * 10;
+  };
+
+  const showFloatingText = (text, x, y, color) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setFloatingTexts((prev) => [...prev, { id, text, x, y, color }]);
+
+    setTimeout(() => {
+      setFloatingTexts((prev) => prev.filter((item) => item.id !== id));
+    }, 1250); // Remove after animation
   };
 
   if (loading)
@@ -99,6 +106,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
         height: canvasSize,
         pointerEvents: clickDisabled ? "none" : "auto",
         opacity: clickDisabled && missedClick ? 0.75 : 1,
+        position: "relative",
       }}
     >
       {icons.map((icon) => (
@@ -109,7 +117,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
           {highlightedTarget === icon.id && (
             <div
               className={timeLeft <= 0 ? "target-highlight target-fail" : "target-highlight"}
-              style={{ position: "absolute", width: iconWidth + 10, height: iconHeight + 30 }}
+              style={{ position: "absolute", width: iconWidth, height: iconWidth }}
             />
           )}
 
@@ -120,6 +128,12 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
             style={{ width: iconWidth, height: "auto", position: "absolute", pointerEvents: "none" }}
           />
         </div>
+      ))}
+
+      {floatingTexts.map(({ id, text, x, y, color }) => (
+        <span key={id} className="floating-text" style={{ top: y - 50, left: x + 15, color }}>
+          {text}
+        </span>
       ))}
     </div>
   );

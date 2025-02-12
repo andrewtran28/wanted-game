@@ -43,15 +43,15 @@ function GameOverModal({ score, level, onContinue }) {
     <div className="game-over-modal">
       <div className="modal-content">
         <h2>Game Over</h2>
-        <p>Highest Level: {level}</p>
         <p>Your Score: {score}</p>
+        <p>Level: {level}</p>
 
         {isTop10 && score > 0 ? (
           <>
             <p>Congratulations! You made it to the Top 10 Leaderboard!</p>
             <input
               type="text"
-              maxLength="25"
+              maxLength="12"
               placeholder="Enter your name"
               value={username}
               onChange={(e) => setUsername(e.target.value)}

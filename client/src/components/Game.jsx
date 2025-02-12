@@ -12,7 +12,7 @@ function Game() {
   const [iconQueue, setIconQueue] = useState([]);
   const [target, setTarget] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [level, setLevel] = useState(48);
+  const [level, setLevel] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isPaused, setIsPaused] = useState(false);
@@ -114,7 +114,7 @@ function Game() {
 
         {!gameStarted ? (
           <>
-            <Scoreboard level={level} timeLeft={timeLeft} target={target} score={score} loading={loading} />
+            <Scoreboard level={"1"} timeLeft={timeLeft} target={target} score={"00000000"} />
             <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
               <button className="btn-start" onClick={startGame}>
                 Start Game
