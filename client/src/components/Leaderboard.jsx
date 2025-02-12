@@ -39,7 +39,8 @@ function Leaderboard() {
       <ol>
         {scores.map((entry, index) => (
           <li key={index}>
-            <span>{entry.username}</span> - <span>{entry.score}</span> - <span>{formatDate(entry.createdAt)}</span>
+            <span>{entry.username}</span> - <span>{entry.level}</span> - <span>{entry.score}</span> -{" "}
+            <span>{formatDate(entry.createdAt)}</span>
           </li>
         ))}
       </ol>

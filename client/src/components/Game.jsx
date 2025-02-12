@@ -1,26 +1,37 @@
-import { v4 as uuidv4 } from "uuid";
-import { useState, useEffect, useCallback } from "react";
-import Scoreboard from "../components/Scoreboard";
-import Canvas from "../components/Canvas";
-import GameOverModal from "../components/GameOverModal";
-import Leaderboard from "../components/Leaderboard";
-import difficulty from "../utils/difficulty";
-import { imgArr, selectTarget, randomExcluding } from "../utils/randomize";
-import "../styles/Canvas.css";
+import { useState, useEffect, useCallback, useRef } from "react";
+import Scoreboard from "./Scoreboard";
+import Canvas from "./Canvas";
+import GameOverModal from "./GameOverModal";
+import Leaderboard from "./Leaderboard";
+import { canvasSize, imgArr, difficulty } from "../utils/gameConfig";
+import { selectTarget, randomExcluding, addIcon } from "../utils/randomize";
+import "../styles/Game.css";
 
 function Game() {
   const [icons, setIcons] = useState([]);
+  const [iconQueue, setIconQueue] = useState([]);
   const [target, setTarget] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [iconQueue, setIconQueue] = useState([]);
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(48);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isPaused, setIsPaused] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const { iconWidth, iconHeight, overlapThreshold, canvasSize } = difficulty(level);
+  const gameContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -44,7 +55,7 @@ function Game() {
     if (!iconQueue.length) return;
 
     const timeout = setTimeout(() => {
-      addIcon(iconQueue[0], iconQueue[0] === imgArr[target]);
+      addIcon(iconQueue[0], iconQueue[0] === imgArr[target], icons, setIcons, level);
       setIconQueue((prev) => prev.slice(1));
       if (iconQueue.length === 1) setLoading(false);
     }, 1);
@@ -55,29 +66,6 @@ function Game() {
   useEffect(() => {
     if (!loading) setIsPaused(false);
   }, [loading]);
-
-  const isOverlapping = (x, y) => {
-    return icons
-      .filter((icon) => Math.abs(icon.x - x) < iconWidth * 2 && Math.abs(icon.y - y) < iconHeight * 2)
-      .some(
-        (icon) =>
-          Math.abs(icon.x - x) < iconWidth * overlapThreshold && Math.abs(icon.y - y) < iconHeight * overlapThreshold
-      );
-  };
-
-  const addIcon = (imgPath, isTarget) => {
-    for (let attempts = 0; attempts < 250; attempts++) {
-      const x = Math.random() * (canvasSize - iconWidth);
-      const y = Math.random() * (canvasSize - iconHeight);
-
-      if (!isOverlapping(x, y)) {
-        setIcons((prev) => [...prev, { isTarget, id: uuidv4(), x, y, imgPath }]);
-        return;
-      }
-    }
-
-    console.log(`Level ${level}: No more valid spots available!`);
-  };
 
   const nextLevel = useCallback(() => {
     const newLevel = level + 1;
@@ -109,15 +97,30 @@ function Game() {
     setIsGameOver(false);
   };
 
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      gameContainerRef.current?.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
   return (
     <div id="web-layout">
-      <div id="game-cont">
+      <div id="game-cont" ref={gameContainerRef} className={isFullscreen ? "fullscreen" : ""}>
+        <button className="btn-fullscreen" onClick={toggleFullscreen}>
+          {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+        </button>
+
         {!gameStarted ? (
-          <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
-            <button className="btn-start" onClick={startGame}>
-              Start Game
-            </button>
-          </div>
+          <>
+            <Scoreboard level={level} timeLeft={timeLeft} target={target} score={score} loading={loading} />
+            <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
+              <button className="btn-start" onClick={startGame}>
+                Start Game
+              </button>
+            </div>
+          </>
         ) : (
           <div className={`canvas-container ${isGameOver ? "canvas-disabled" : ""}`}>
             <Scoreboard level={level} timeLeft={timeLeft} target={target} score={score} />

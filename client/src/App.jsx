@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Game from "./pages/Game";
+import GamePage from "./pages/GamePage";
 import "./App.css";
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Game />} />
+          <Route path="/" element={<GamePage />} />
         </Routes>
       </Router>
     </>

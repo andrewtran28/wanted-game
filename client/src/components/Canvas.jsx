@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import difficulty from "../utils/difficulty";
-import "../styles/Canvas.css";
+import { canvasSize, difficulty } from "../utils/gameConfig";
+import "../styles/Game.css";
 
 function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound, setScore, level }) {
   const [highlightedTarget, setHighlightedTarget] = useState(null);
@@ -8,7 +8,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
   const [missedClick, setMissedClick] = useState(false);
   const [lastRoundTime, setLastRoundTime] = useState(timeLeft);
 
-  const { iconWidth, iconHeight, canvasSize, scoreBonus } = difficulty(level);
+  const { iconWidth, iconHeight, scoreBonus } = difficulty(level);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -32,11 +32,17 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
     if (clickDisabled) return;
 
     setClickDisabled(true);
-    setTimeout(() => setClickDisabled(false), 1250); //Click cool down time
+    setTimeout(() => setClickDisabled(false), 1250); // Click cooldown time
 
     const rect = event.currentTarget.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
+
+    // Calculate scale factor
+    const scaleX = rect.width / canvasSize;
+    const scaleY = rect.height / canvasSize;
+
+    // Adjust click position based on scaling
+    const clickX = (event.clientX - rect.left) / scaleX;
+    const clickY = (event.clientY - rect.top) / scaleY;
 
     const clickedTarget = isTargetClicked(clickX, clickY);
 
@@ -45,7 +51,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
       highlightTarget(clickedTarget.id);
     } else {
       setMissedClick(true);
-      setTimeLeft((prev) => Math.max(0, prev - 3)); //Misclick time penalize.
+      setTimeLeft((prev) => Math.max(0, prev - 3)); // Misclick time penalty
     }
   };
 

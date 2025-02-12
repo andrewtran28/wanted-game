@@ -1,12 +1,18 @@
 import { imgArr } from "../utils/randomize";
 
-function Scoreboard({ level, timeLeft, target, score }) {
+function Scoreboard({ level, timeLeft, target, score, loading }) {
   return (
-    <div className="game-info">
-      {target !== null && (
+    <div id="game-info">
+      {target !== null && !loading && (
         <div className="target-container">
           <h3>Find this penguin:</h3>
-          <img src={imgArr[target]} alt="Target Icon" className="target-image" />
+          <img src={imgArr[target]} className="target-image" />
+        </div>
+      )}
+      {loading && (
+        <div className="target-container">
+          <h3>Find this penguin:</h3>
+          <span>Loading...</span>
         </div>
       )}
       <div className="game-scoreboard">

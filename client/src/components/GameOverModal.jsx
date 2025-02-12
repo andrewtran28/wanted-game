@@ -30,7 +30,7 @@ function GameOverModal({ score, level, onContinue }) {
       await fetch(`${API_BASE_URL}/api/leaderboard`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, score }),
+        body: JSON.stringify({ username, score, level }),
       });
 
       onContinue();
@@ -46,7 +46,7 @@ function GameOverModal({ score, level, onContinue }) {
         <p>Highest Level: {level}</p>
         <p>Your Score: {score}</p>
 
-        {isTop10 ? (
+        {isTop10 && score > 0 ? (
           <>
             <p>Congratulations! You made it to the Top 10 Leaderboard!</p>
             <input
@@ -65,7 +65,7 @@ function GameOverModal({ score, level, onContinue }) {
         )}
 
         <button onClick={onContinue} className="btn-continue">
-          {isTop10 ? "Skip" : "Continue"}
+          {isTop10 && score > 10 ? "Skip" : "Continue"}
         </button>
       </div>
     </div>
