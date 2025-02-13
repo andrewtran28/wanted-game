@@ -6,6 +6,8 @@ import Leaderboard from "./Leaderboard";
 import { canvasSize, imgArr, difficulty } from "../utils/gameConfig";
 import { selectTarget, randomExcluding, addIcon } from "../utils/randomize";
 import "../styles/Game.css";
+import fullscreen from "../assets/fullscreen.png";
+import exitScreen from "../assets/exit-fullscreen.png";
 
 function Game() {
   const [icons, setIcons] = useState([]);
@@ -92,8 +94,10 @@ function Game() {
 
   const continueGame = () => {
     setGameStarted(false);
+    setTarget(null);
     setLevel(0);
     setTimeLeft(30);
+    setScore(0);
     setIsGameOver(false);
   };
 
@@ -109,22 +113,17 @@ function Game() {
     <div id="web-layout">
       <div id="game-cont" ref={gameContainerRef} className={isFullscreen ? "fullscreen" : ""}>
         <button className="btn-fullscreen" onClick={toggleFullscreen}>
-          {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          {isFullscreen ? <img src={exitScreen} width="30px" /> : <img src={fullscreen} width="30px" />}
         </button>
-
-        {!gameStarted ? (
-          <>
-            <Scoreboard level={"1"} timeLeft={timeLeft} target={target} score={"00000000"} />
+        <div className={`canvas-cont ${isGameOver ? "canvas-disabled" : ""}`}>
+          <Scoreboard level={level} timeLeft={timeLeft} target={target} score={score} />
+          {!gameStarted ? (
             <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
               <button className="btn-start" onClick={startGame}>
                 Start Game
               </button>
             </div>
-          </>
-        ) : (
-          <div className={`canvas-container ${isGameOver ? "canvas-disabled" : ""}`}>
-            <Scoreboard level={level} timeLeft={timeLeft} target={target} score={score} />
-
+          ) : (
             <Canvas
               icons={icons}
               loading={loading}
@@ -135,9 +134,9 @@ function Game() {
               setScore={setScore}
               nextRound={() => nextLevel()}
             />
-            {isGameOver && <GameOverModal score={score} level={level} onContinue={continueGame} />}
-          </div>
-        )}
+          )}
+          {isGameOver && <GameOverModal score={score} level={level} onContinue={continueGame} />}
+        </div>
       </div>
 
       <Leaderboard />

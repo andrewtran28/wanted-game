@@ -1,0 +1,39 @@
+#gameover-modal {
+  position: absolute;
+  padding: 20px 30px;
+  top: -10px;
+  left: -30px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 15;
+  pointer-events: all; /* Allow interactions with the modal */
+}
+
+.modal-content {
+  background-color: #003557CC;
+  font-size: 1.4rem;
+  padding: 40px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.modal-content h1 {
+  color: var(--fail-red);
+  font-size: 3rem;
+  margin: 10px 0;
+}
+
+.modal-content input {
+  font-size: 1.25rem;
+  padding: 10px;
+}
+
+.modal-content button {
+  margin: 10px 5px;
+  padding: 10px;
+  font-size: inherit;
+}

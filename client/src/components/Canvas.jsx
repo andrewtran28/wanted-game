@@ -38,10 +38,8 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
     const rect = event.currentTarget.getBoundingClientRect();
     const scaleX = rect.width / canvasSize;
     const scaleY = rect.height / canvasSize;
-
     const clickX = (event.clientX - rect.left) / scaleX;
     const clickY = (event.clientY - rect.top) / scaleY;
-
     const clickedTarget = isTargetClicked(clickX, clickY);
 
     if (clickedTarget) {
@@ -50,7 +48,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
     } else {
       setMissedClick(true);
       setTimeLeft((prev) => Math.max(0, prev - 3)); // Misclick time penalty
-      showFloatingText("-3.0s", clickX, clickY, "red");
+      showFloatingText("-3.0s", clickX, clickY, "#cd0000");
     }
   };
 
@@ -69,14 +67,14 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
     setLastRoundTime(timeLeft);
 
     setTimeLeft((prevTime) => Math.min(45, prevTime + 2));
-    showFloatingText(pointsEarned, clickX, clickY, "#3aca3a");
-    showFloatingText("+2.0s", clickX, clickY + 30, "orange");
+    showFloatingText(pointsEarned, clickX, clickY, "#00ba00");
+    showFloatingText("+2.0s", clickX, clickY + 30, "#ffc500");
   };
 
   const calculateScore = (reactionTime) => {
     console.log(`Level ${level}: Reaction Time: ${reactionTime.toFixed(3)}s`);
-    if (reactionTime <= 1) return 1000 * scoreBonus;
-    const roundedPenalty = Math.floor(reactionTime * 10) * 7.5;
+    if (reactionTime <= 1.5) return 1000 * scoreBonus; //Success within 1.5s grants full points.
+    const roundedPenalty = Math.floor((reactionTime - 0.25) * 10) * 7.5; //Start penalty after 0.25s.
     let score = Math.max(1000 - roundedPenalty, 100) * scoreBonus;
     return Math.floor(score / 10) * 10;
   };
@@ -131,7 +129,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
       ))}
 
       {floatingTexts.map(({ id, text, x, y, color }) => (
-        <span key={id} className="floating-text" style={{ top: y - 50, left: x + 15, color }}>
+        <span key={id} className="floating-text" style={{ top: y - 30, left: x + 10, color }}>
           {text}
         </span>
       ))}

@@ -1,18 +1,13 @@
-#web-layout {
-  border: 1px solid red;
- display: flex;
- justify-content: center;
- align-items: center;
-}
-
 #game-cont {
-  border: 1px solid green;
+  margin: 0 30px;
+  background-color: var(--body);
   padding: 0 30px 30px 30px;
   position: relative;
   font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
-#game-cont .icon-random, .icon-target, .canvas-container {
+#game-cont {
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -22,98 +17,27 @@
 
 .icon-random, .icon-target {
   position: absolute;
-  /* border-radius must be 100% for target click accuracy */
   border-radius: 100%;
 }
 
-#scoreboard {
-  /* border: 1px solid pink; */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1.25rem;
-  line-height: 1.5rem;
-  width: 100%;
-  max-width: 550px;
-  margin-top: 10px;
-}
-
-.scoreboard-target {
-  /* background-color: rgb(120, 162, 192); */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-}
-.scoreboard-target img {
-  margin: 10px;
-}
-
-.info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-}
-
-.info-time {
-  font-size: 3rem;
-  line-height: 3rem;
-  color: orange;
-  font-weight: 600;
-}
-
-.game-info {
-  /* border: 1px solid red; */
-  flex: 1.5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.game-info-top {
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-}
-
-button {
-  margin: 5px;
-  padding: 5px;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-
-.btn-start {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px 40px;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.canvas-container{
+.canvas-cont{
   position: relative;
 }
 
-.canvas-container.canvas-disabled {
+.canvas-cont.canvas-disabled {
   pointer-events: none; /* Prevent interactions with the canvas */
 }
 
 #canvas {
   position: relative;
   background-image: url("/grass_winter.png");
-  border: 25px solid white;
+  border: 30px solid white;
+  border-radius: 5px;
 }
 
 .target-highlight {
   border-radius: 50%;
-  border: 8px solid #30a630;
+  border: 8px solid green;
   /* Calc for icon size of 107x78 px because iconHeight = iconWidth for circle */
   top: calc(-8px * 2*(107/78));
   left: -8px;
@@ -122,85 +46,9 @@ button {
 }
 
 .target-fail {
-  border: 8px solid red;
+  border: 8px solid var(--fail-red);
 }
 
-.game-over-modal {
-  position: absolute;
-  padding: 20px 30px;
-  top: -10px;
-  left: -30px;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 15;
-  pointer-events: all; /* Allow interactions with the modal */
-
-}
-
-.modal-content {
-  background-color: hsla(202, 100%, 50%, 0.75);
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-}
-
-/* Fullscreen styles */
-.fullscreen {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
-/* Scale the canvas and scoreboard proportionally */
-.fullscreen #canvas {
-  width: 90vw;
-  height: 90vh;
-  transform-origin: top;
-}
-
-.fullscreen .canvas-container {
-  transform: scale(1.5);
-  z-index: 1; /* Ensure canvas is below the scoreboard */
-}
-
-.fullscreen .scoreboard {
-  font-size: 2rem; /* Increase font size */
-  position: absolute; /* Position it above the canvas */
-  top: 10px;
-  left: 10px;
-  z-index: 10; /* Make sure scoreboard is above the canvas */
-}
-
-.fullscreen .btn-start,
-.fullscreen .btn-fullscreen {
-  font-size: 1.5rem; /* Increase button font size */
-}
-
-.fullscreen .btn-fullscreen {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 10px 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: none;
-  cursor: pointer;
-  z-index: 100;
-}
-
-.fullscreen .btn-fullscreen:hover {
-  background: rgba(0, 0, 0, 0.9);
-}
-
-/* Time bonus/penalty animations */
 .floating-text {
   position: absolute;
   font-size: 2rem;
@@ -223,4 +71,33 @@ button {
     transform: translateY(-30px);
     opacity: 0;
   }
+}
+
+.fullscreen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.fullscreen .canvas-cont {
+  transform: scale(1.4);
+  z-index: 1;
+}
+
+.fullscreen button {
+  font-size: 1.25rem;
+}
+
+.fullscreen .btn-fullscreen {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  z-index: 100;
 }

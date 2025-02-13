@@ -1,8 +1,8 @@
 .leaderboard {
+  align-self: start;
   width: 100%;
   min-width: 400px;
-  max-width: 600px;
-  margin: 20px auto;
+  margin: 0 20px;
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
@@ -17,7 +17,9 @@
   border-collapse: collapse;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  background-color: var(--body);
+  border-bottom: 1px solid var(--body);
 }
 
 .leaderboard th, .leaderboard td {
@@ -26,7 +28,7 @@
 }
 
 .leaderboard th {
-  background-color: #282c34;
+  background-color: var(--accent);
   color: #fff;
   text-transform: uppercase;
   font-size: 0.9rem;

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import "../styles/GameOverModal.css";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function GameOverModal({ score, level, onContinue }) {
@@ -33,22 +35,27 @@ function GameOverModal({ score, level, onContinue }) {
         body: JSON.stringify({ username, score, level }),
       });
 
-      onContinue();
+      window.location.reload(); // Refresh entire page after submission
     } catch (error) {
       console.error("Error submitting score:", error);
     }
   };
 
   return (
-    <div className="game-over-modal">
+    <div id="gameover-modal">
       <div className="modal-content">
-        <h2>Game Over</h2>
+        <h1>Game Over</h1>
         <p>Your Score: {score}</p>
-        <p>Level: {level}</p>
+        <p>Level {level}</p>
+        <hr />
 
         {isTop10 && score > 0 ? (
           <>
-            <p>Congratulations! You made it to the Top 10 Leaderboard!</p>
+            <p>
+              <span>Congratulations!</span>
+              <br />
+              <span>You made it to the Top 10 Leaderboard!</span>
+            </p>
             <input
               type="text"
               maxLength="12"
@@ -59,6 +66,7 @@ function GameOverModal({ score, level, onContinue }) {
             <button onClick={handleSubmit} className="btn-submit">
               Submit Score
             </button>
+            <br />
           </>
         ) : (
           <p>Try again to reach the leaderboard!</p>
