@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Scoreboard from "./Scoreboard";
 import Canvas from "./Canvas";
 import GameOverModal from "./GameOverModal";
-import Leaderboard from "./Leaderboard";
 import { canvasSize, imgArr, difficulty } from "../utils/gameConfig";
 import { selectTarget, randomExcluding, addIcon } from "../utils/randomize";
 import "../styles/Game.css";
@@ -21,24 +20,30 @@ function Game() {
   const [gameStarted, setGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-
-  const gameContainerRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const gameContRef = useRef(null);
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+    const handleFullscreenChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    const updateScale = () => {
+      const heightScale = window.innerHeight / (canvasSize + 240);
+      const widthScale = window.innerWidth / (canvasSize + 120);
+      setScale(isFullscreen ? Math.min(2, heightScale, widthScale) : 1);
     };
 
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    updateScale();
+    window.addEventListener("resize", updateScale);
+
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      window.removeEventListener("resize", updateScale);
     };
-  }, []);
+  }, [isFullscreen]);
 
   useEffect(() => {
-    if (timeLeft <= 0) {
-      gameOver();
-    }
+    if (timeLeft <= 0) setTimeout(() => setIsGameOver(true), 1250);
     if (isPaused || !gameStarted) return;
 
     let startTime = Date.now();
@@ -90,8 +95,6 @@ function Game() {
     nextLevel();
   };
 
-  const gameOver = () => setTimeout(() => setIsGameOver(true), 1250);
-
   const continueGame = () => {
     setGameStarted(false);
     setTarget(null);
@@ -102,44 +105,36 @@ function Game() {
   };
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      gameContainerRef.current?.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
+    document.fullscreenElement ? document.exitFullscreen() : gameContRef.current?.requestFullscreen();
   };
 
   return (
-    <div id="web-layout">
-      <div id="game-cont" ref={gameContainerRef} className={isFullscreen ? "fullscreen" : ""}>
-        <button className="btn-fullscreen" onClick={toggleFullscreen}>
-          {isFullscreen ? <img src={exitScreen} width="30px" /> : <img src={fullscreen} width="30px" />}
-        </button>
-        <div className={`canvas-cont ${isGameOver ? "canvas-disabled" : ""}`}>
-          <Scoreboard level={level} timeLeft={timeLeft} target={target} score={score} />
-          {!gameStarted ? (
-            <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
-              <button className="btn-start" onClick={startGame}>
-                Start Game
-              </button>
-            </div>
-          ) : (
-            <Canvas
-              icons={icons}
-              loading={loading}
-              level={level}
-              setIsPaused={setIsPaused}
-              timeLeft={timeLeft}
-              setTimeLeft={setTimeLeft}
-              setScore={setScore}
-              nextRound={() => nextLevel()}
-            />
-          )}
-          {isGameOver && <GameOverModal score={score} level={level} onContinue={continueGame} />}
-        </div>
+    <div id="game-cont" ref={gameContRef} className={isFullscreen ? "fullscreen" : ""}>
+      <button className="btn-fullscreen" onClick={toggleFullscreen}>
+        {isFullscreen ? <img src={exitScreen} width="30px" /> : <img src={fullscreen} width="30px" />}
+      </button>
+      <div className={`canvas-cont ${isGameOver ? "canvas-disabled" : ""}`} style={{ transform: `scale(${scale})` }}>
+        <Scoreboard level={level} timeLeft={timeLeft} target={target} score={score} />
+        {!gameStarted ? (
+          <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
+            <button className="btn-start" onClick={startGame}>
+              Start Game
+            </button>
+          </div>
+        ) : (
+          <Canvas
+            icons={icons}
+            loading={loading}
+            level={level}
+            setIsPaused={setIsPaused}
+            timeLeft={timeLeft}
+            setTimeLeft={setTimeLeft}
+            setScore={setScore}
+            nextRound={nextLevel}
+          />
+        )}
+        {isGameOver && <GameOverModal score={score} level={level} onContinue={continueGame} />}
       </div>
-
-      <Leaderboard />
     </div>
   );
 }

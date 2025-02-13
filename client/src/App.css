@@ -20,8 +20,12 @@ body {
   padding: 0;
 }
 
-h1, h2 {
+h1, h2, a {
   color: var(--font-header);
+}
+
+a {
+  text-decoration: none;
 }
 
 button {
@@ -51,7 +55,7 @@ button:active {
 
 #title {
   display: flex;
-  margin: 20px;
+  margin: 20px 0;
   place-self: center;
 }
 
@@ -71,9 +75,54 @@ button:active {
   box-shadow: 3px 3px #6f4319;
 }
 
-
 #web-layout {
  display: flex;
  justify-content: center;
  align-items: center;
 }
+
+.right-cont {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  align-items: center;
+  max-width: 450px;
+  place-self: center;
+  margin: 0 30px;
+}
+
+.description {
+  background-color: var(--body);
+  border-radius: 5px;
+  margin: 20px 0;
+  padding: 15px;
+  text-align: justify;
+}
+
+@media (max-width: 1200px) {
+  #web-layout {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .right-cont {
+    margin: 50px 0 0 0;
+  }
+}
+
+@media (max-width: 650px) {
+  #logo-ac {
+    display:none;
+  }
+
+  #page{
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .right-cont {
+    margin: 0;
+  }
+}
+

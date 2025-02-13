@@ -72,7 +72,6 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
   };
 
   const calculateScore = (reactionTime) => {
-    console.log(`Level ${level}: Reaction Time: ${reactionTime.toFixed(3)}s`);
     if (reactionTime <= 1.5) return 1000 * scoreBonus; //Success within 1.5s grants full points.
     const roundedPenalty = Math.floor((reactionTime - 0.25) * 10) * 7.5; //Start penalty after 0.25s.
     let score = Math.max(1000 - roundedPenalty, 100) * scoreBonus;

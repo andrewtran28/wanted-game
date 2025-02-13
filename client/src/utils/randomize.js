@@ -35,8 +35,6 @@ const addIcon = (imgPath, isTarget, icons, setIcons, level) => {
       return;
     }
   }
-
-  console.log(`Level ${level}: No more valid spots available!`);
 };
 
 export { imgArr, selectTarget, randomExcluding, isOverlapping, addIcon };
