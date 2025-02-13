@@ -7,7 +7,7 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 
 app.get("/api/leaderboard", async (req, res) => {
   try {
@@ -24,7 +24,11 @@ app.get("/api/leaderboard", async (req, res) => {
 
 app.post("/api/leaderboard", async (req, res) => {
   try {
-    const { username, score, level } = req.body;
+    let { username, score, level } = req.body;
+    if (!username || !Number.isInteger(score) || score < 1) {
+      return res.status(400).json({ error: "Invalid data" });
+    }
+
     if (score > 999999999) score = 999999999;
     if (level > 9999) level = 9999;
 
@@ -41,6 +45,16 @@ app.post("/api/leaderboard", async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Server error" });
   }
+});
+
+process.on("SIGINT", async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+  await prisma.$disconnect();
+  process.exit(0);
 });
 
 const PORT = process.env.PORT || 5000;
