@@ -69,7 +69,7 @@ function GameOverModal({ score, level, onContinue }) {
             <br />
           </>
         ) : (
-          <p>Try again to reach the leaderboard!</p>
+          <p>Better luck next time!</p>
         )}
 
         <button onClick={onContinue} className="btn-continue">
