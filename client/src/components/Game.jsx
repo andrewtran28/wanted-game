@@ -90,7 +90,7 @@ function Game() {
   const startGame = () => {
     setGameStarted(true);
     setLevel(1);
-    setTimeLeft(30000);
+    setTimeLeft(30);
     setScore(0);
     nextLevel();
   };
@@ -99,7 +99,7 @@ function Game() {
     setGameStarted(false);
     setTarget(null);
     setLevel(0);
-    setTimeLeft(30000);
+    setTimeLeft(30);
     setScore(0);
     setIsGameOver(false);
   };
