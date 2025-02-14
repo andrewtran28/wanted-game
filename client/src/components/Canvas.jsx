@@ -6,6 +6,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
   const [highlightedTarget, setHighlightedTarget] = useState(null);
   const [clickDisabled, setClickDisabled] = useState(false);
   const [missedClick, setMissedClick] = useState(false);
+  const [lastRoundTime, setLastRoundTime] = useState(timeLeft);
   const [floatingTexts, setFloatingTexts] = useState([]);
   const [showLoadingText, setShowLoadingText] = useState(false);
 
@@ -74,10 +75,11 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
       nextRound();
     }, 1250);
 
-    const reactionTime = timeLeft - (level > 1 ? timeLeft - 2 : timeLeft);
+    const reactionTime = lastRoundTime - (level > 1 ? timeLeft - 2 : timeLeft);
     const pointsEarned = calculateScore(reactionTime);
-
     setScore((prevScore) => prevScore + pointsEarned);
+    setLastRoundTime(timeLeft);
+
     setTimeLeft((prevTime) => Math.min(45, prevTime + 2));
     showFloatingText(pointsEarned, clickX, clickY, "#00ba00");
     showFloatingText("+2.0s", clickX, clickY + 30, "#ffc500");
@@ -85,8 +87,8 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
 
   const calculateScore = (reactionTime) => {
     if (reactionTime <= 1.5) return 1000 * scoreBonus; //Success within 1.5s grants full points.
-    const roundedPenalty = Math.floor(reactionTime * 10) * 7.5; //Start penalty after 0.25s.
-    let score = Math.max(1000 * scoreBonus - roundedPenalty, 100);
+    const roundedPenalty = Math.floor(reactionTime * 10) * 7.5;
+    let score = Math.max(1000 * scoreBonus - roundedPenalty, (1000 * scoreBonus) / 2);
     return Math.floor(score / 10) * 10;
   };
 
