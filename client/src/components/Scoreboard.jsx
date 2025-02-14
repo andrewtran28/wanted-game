@@ -6,7 +6,7 @@ function padNum(num, length) {
 }
 
 function Scoreboard({ level, timeLeft, target, score }) {
-  const timeColor = timeLeft <= 5 ? "#cd0000" : timeLeft >= 30 ? "#00ba00" : "#ffc500";
+  const timeColor = timeLeft <= 10 ? "#cd0000" : timeLeft >= 30 ? "#00ba00" : "#ffc500";
 
   return (
     <div id="scoreboard">

@@ -80,7 +80,7 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
     setScore((prevScore) => prevScore + pointsEarned);
     setLastRoundTime(timeLeft);
 
-    setTimeLeft((prevTime) => Math.min(45, prevTime + 2));
+    setTimeLeft((prevTime) => Math.min(prevTime + 2, 45));
     showFloatingText(pointsEarned, clickX, clickY, "#00ba00");
     showFloatingText("+2.0s", clickX, clickY + 30, "#ffc500");
   };
