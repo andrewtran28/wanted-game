@@ -34,6 +34,7 @@ function GameOverModal({ score, level, onContinue }) {
         body: JSON.stringify({ username, score, level }),
       });
 
+      onContinue();
       window.location.reload(); // Refresh entire page after submission
     } catch (error) {
       console.error("Error submitting score:", error);
