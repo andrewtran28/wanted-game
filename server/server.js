@@ -32,12 +32,14 @@ app.post("/api/leaderboard", async (req, res) => {
     score = Math.min(score, 999999999);
     level = Math.min(level, 9999);
 
-    const existingEntry = await prisma.leaderboard.findUnique({ where: { username } });
+    const existingEntry = await prisma.leaderboard.findFirst({
+      where: { username },
+    });
 
     if (existingEntry) {
       if (score > existingEntry.score) {
         const updatedEntry = await prisma.leaderboard.update({
-          where: { username },
+          where: { id: existingEntry.id },
           data: { score, level, createdAt: new Date() },
         });
 
@@ -53,8 +55,8 @@ app.post("/api/leaderboard", async (req, res) => {
 
     res.status(201).json(newEntry);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error" });
+    console.error("POST /api/leaderboard error:", error);
+    res.status(500).json({ error: error.message || "Server error" });
   }
 });
 
