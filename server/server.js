@@ -29,18 +29,16 @@ app.post("/api/leaderboard", async (req, res) => {
       return res.status(400).json({ error: "Invalid data" });
     }
 
-    if (score > 999999999) score = 999999999;
-    if (level > 9999) level = 9999;
+    score = Math.min(score, 99999999);
+    level = Math.min(level, 9999);
 
-    if (!username || !score || score < 1) {
-      return res.status(400).json({ error: "Invalid data" });
-    }
-
-    const newEntry = await prisma.leaderboard.create({
-      data: { username, level, score },
+    const updatedEntry = await prisma.leaderboard.upsert({
+      where: { username },
+      update: { score, level, createdAt: new Date() },
+      create: { username, score, level },
     });
 
-    res.status(201).json(newEntry);
+    res.status(201).json(updatedEntry);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
