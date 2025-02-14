@@ -38,8 +38,8 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
     const rect = event.currentTarget.getBoundingClientRect();
     const scaleX = rect.width / canvasSize;
     const scaleY = rect.height / canvasSize;
-    const clickX = (event.clientX - rect.left) / scaleX;
-    const clickY = (event.clientY - rect.top) / scaleY;
+    const clickX = Math.round((event.clientX - rect.left) / scaleX);
+    const clickY = Math.round((event.clientY - rect.top) / scaleY);
     const clickedTarget = isTargetClicked(clickX, clickY);
 
     if (clickedTarget) {
@@ -95,43 +95,45 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
     );
 
   return (
-    <div
-      id="canvas"
-      onClick={handleCanvasClick}
-      style={{
-        width: canvasSize,
-        height: canvasSize,
-        pointerEvents: clickDisabled ? "none" : "auto",
-        opacity: clickDisabled && missedClick ? 0.75 : 1,
-        position: "relative",
-      }}
-    >
-      {icons.map((icon) => (
-        <div
-          key={icon.id}
-          style={{ position: "absolute", top: icon.y, left: icon.x, zIndex: highlightedTarget === icon.id ? 10 : 1 }}
-        >
-          {highlightedTarget === icon.id && (
-            <div
-              className={timeLeft <= 0 ? "target-highlight target-fail" : "target-highlight"}
-              style={{ position: "absolute", width: iconWidth, height: iconWidth }}
+    <div className="canvas-border">
+      <div
+        id="canvas"
+        onClick={handleCanvasClick}
+        style={{
+          width: canvasSize,
+          height: canvasSize,
+          pointerEvents: clickDisabled ? "none" : "auto",
+          opacity: clickDisabled && missedClick ? 0.75 : 1,
+          position: "relative",
+        }}
+      >
+        {icons.map((icon) => (
+          <div
+            key={icon.id}
+            style={{ position: "absolute", top: icon.y, left: icon.x, zIndex: highlightedTarget === icon.id ? 10 : 1 }}
+          >
+            {highlightedTarget === icon.id && (
+              <div
+                className={timeLeft <= 0 ? "target-highlight target-fail" : "target-highlight"}
+                style={{ position: "absolute", width: iconWidth, height: iconWidth }}
+              />
+            )}
+
+            <img
+              className={icon.isTarget ? "icon-target" : "icon-random"}
+              src={icon.imgPath}
+              alt="icon"
+              style={{ width: iconWidth, height: iconHeight, pointerEvents: "none" }}
             />
-          )}
+          </div>
+        ))}
 
-          <img
-            className={icon.isTarget ? "icon-target" : "icon-random"}
-            src={icon.imgPath}
-            alt="icon"
-            style={{ width: iconWidth, height: "auto", position: "absolute", pointerEvents: "none" }}
-          />
-        </div>
-      ))}
-
-      {floatingTexts.map(({ id, text, x, y, color }) => (
-        <span key={id} className="floating-text" style={{ top: y - 30, left: x + 10, color }}>
-          {text}
-        </span>
-      ))}
+        {floatingTexts.map(({ id, text, x, y, color }) => (
+          <span key={id} className="floating-text" style={{ top: y - 30, left: x + 10, color }}>
+            {text}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

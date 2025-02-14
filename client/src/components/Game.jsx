@@ -90,7 +90,7 @@ function Game() {
   const startGame = () => {
     setGameStarted(true);
     setLevel(1);
-    setTimeLeft(30);
+    setTimeLeft(30000);
     setScore(0);
     nextLevel();
   };
@@ -99,7 +99,7 @@ function Game() {
     setGameStarted(false);
     setTarget(null);
     setLevel(0);
-    setTimeLeft(30);
+    setTimeLeft(30000);
     setScore(0);
     setIsGameOver(false);
   };
@@ -116,10 +116,12 @@ function Game() {
       <div className={`canvas-cont ${isGameOver ? "canvas-disabled" : ""}`} style={{ transform: `scale(${scale})` }}>
         <Scoreboard level={level} timeLeft={timeLeft} target={target} score={score} />
         {!gameStarted ? (
-          <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
-            <button className="btn-start" onClick={startGame}>
-              Start Game
-            </button>
+          <div className="canvas-border">
+            <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
+              <button className="btn-start" onClick={startGame}>
+                Start Game
+              </button>
+            </div>
           </div>
         ) : (
           <Canvas

@@ -18,7 +18,7 @@
 
 .icon-random, .icon-target {
   position: absolute;
-  border-radius: 100%;
+  border-radius: 40%;
 }
 
 .canvas-cont{
@@ -29,11 +29,14 @@
   pointer-events: none; /* Prevent interactions with the canvas */
 }
 
+.canvas-border {/* This class acts as the border for #canvas without affecting #canvas size. */
+  border: 30px solid white;
+  border-radius: 5px;
+}
+
 #canvas {
   position: relative;
   background-image: url("/grass_winter.png");
-  border: 30px solid white;
-  border-radius: 5px;
 }
 
 .target-highlight {
