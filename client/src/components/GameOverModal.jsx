@@ -56,24 +56,24 @@ function GameOverModal({ score, level, onContinue }) {
               <br />
               <span>You made it to the Top 10 Leaderboard!</span>
             </p>
-            <input
-              type="text"
-              maxLength="12"
-              placeholder="Enter your name"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <button onClick={handleSubmit} className="btn-submit">
-              Submit Score
-            </button>
-            <br />
           </>
         ) : (
           <p>Better luck next time!</p>
         )}
 
+        <input
+          type="text"
+          maxLength="12"
+          placeholder="Enter your name"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <button onClick={handleSubmit} className="btn-submit">
+          Submit Score
+        </button>
+        <br />
         <button onClick={onContinue} className="btn-continue">
-          {isTop10 && score > 10 ? "Skip" : "Continue"}
+          Skip
         </button>
       </div>
     </div>

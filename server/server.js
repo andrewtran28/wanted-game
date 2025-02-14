@@ -25,20 +25,32 @@ app.get("/api/leaderboard", async (req, res) => {
 app.post("/api/leaderboard", async (req, res) => {
   try {
     let { username, score, level } = req.body;
-    if (!username || !Number.isInteger(score) || score < 1) {
-      return res.status(400).json({ error: "Invalid data" });
-    }
 
-    score = Math.min(score, 99999999);
-    level = Math.min(level, 9999);
+    if (!username || typeof username !== "string" || username.length > 12) {
+      return res.status(400).json({ error: "Invalid username" });
+    }
+    if (!Number.isInteger(score) || score < 1 || score > 999999999) {
+      return res.status(400).json({ error: "Invalid score" });
+    }
+    if (!Number.isInteger(level) || level < 1 || level > 9999) {
+      return res.status(400).json({ error: "Invalid level" });
+    }
 
     const updatedEntry = await prisma.leaderboard.upsert({
       where: { username },
-      update: { score, level, createdAt: new Date() },
+      update: {
+        score: { set: score, where: { score: { lt: score } } },
+        level: { set: level, where: { score: { lt: score } } },
+        createdAt: { set: new Date(), where: { score: { lt: score } } },
+      },
       create: { username, score, level },
     });
 
-    res.status(201).json(updatedEntry);
+    if (updatedEntry.score !== score) {
+      return res.status(200).json({ message: "Score not high enough to update" });
+    }
+
+    res.status(200).json(updatedEntry);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
