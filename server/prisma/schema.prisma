@@ -9,11 +9,11 @@ datasource db {
 
 model Leaderboard {
   id        String   @id @default(uuid())
-  username  String   @unique @db.VarChar(12)
+  username  String   @db.VarChar(25)
   level     Int
   score     Int
   createdAt DateTime @default(now())
 
+  @@index([score])
   @@map("leaderboard")
-  @@index([score]) // Index for sorting by highest score
 }

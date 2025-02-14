@@ -25,32 +25,33 @@ app.get("/api/leaderboard", async (req, res) => {
 app.post("/api/leaderboard", async (req, res) => {
   try {
     let { username, score, level } = req.body;
-
-    if (!username || typeof username !== "string" || username.length > 12) {
-      return res.status(400).json({ error: "Invalid username" });
-    }
-    if (!Number.isInteger(score) || score < 1 || score > 999999999) {
-      return res.status(400).json({ error: "Invalid score" });
-    }
-    if (!Number.isInteger(level) || level < 1 || level > 9999) {
-      return res.status(400).json({ error: "Invalid level" });
+    if (!username || !Number.isInteger(score) || score < 1) {
+      return res.status(400).json({ error: "Invalid data" });
     }
 
-    const updatedEntry = await prisma.leaderboard.upsert({
-      where: { username },
-      update: {
-        score: { set: score, where: { score: { lt: score } } },
-        level: { set: level, where: { score: { lt: score } } },
-        createdAt: { set: new Date(), where: { score: { lt: score } } },
-      },
-      create: { username, score, level },
+    score = Math.min(score, 999999999);
+    level = Math.min(level, 9999);
+
+    const existingEntry = await prisma.leaderboard.findUnique({ where: { username } });
+
+    if (existingEntry) {
+      if (score > existingEntry.score) {
+        const updatedEntry = await prisma.leaderboard.update({
+          where: { username },
+          data: { score, level, createdAt: new Date() },
+        });
+
+        return res.status(200).json(updatedEntry);
+      } else {
+        return res.status(200).json({ message: "Score not high enough to update" });
+      }
+    }
+
+    const newEntry = await prisma.leaderboard.create({
+      data: { username, level, score },
     });
 
-    if (updatedEntry.score !== score) {
-      return res.status(200).json({ message: "Score not high enough to update" });
-    }
-
-    res.status(200).json(updatedEntry);
+    res.status(201).json(newEntry);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });

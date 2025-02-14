@@ -10,7 +10,6 @@ function GameOverModal({ score, level, onContinue }) {
   useEffect(() => {
     const checkLeaderboard = async () => {
       try {
-        console.log(API_BASE_URL);
         const response = await fetch(`${API_BASE_URL}/api/leaderboard`);
         const data = await response.json();
 
