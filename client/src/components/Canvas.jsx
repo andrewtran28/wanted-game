@@ -6,8 +6,8 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
   const [highlightedTarget, setHighlightedTarget] = useState(null);
   const [clickDisabled, setClickDisabled] = useState(false);
   const [missedClick, setMissedClick] = useState(false);
-  const [lastRoundTime, setLastRoundTime] = useState(timeLeft);
-  const [floatingTexts, setFloatingTexts] = useState([]); // Floating text state
+  const [floatingTexts, setFloatingTexts] = useState([]);
+  const [showLoadingText, setShowLoadingText] = useState(false);
 
   const { iconWidth, iconHeight, scoreBonus } = difficulty(level);
 
@@ -28,6 +28,19 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
         clickY <= icon.y + iconHeight
     );
   };
+
+  useEffect(() => {
+    let timeout;
+    if (loading) {
+      timeout = setTimeout(() => {
+        setShowLoadingText(true);
+      }, 1000);
+    } else {
+      setShowLoadingText(false);
+    }
+
+    return () => clearTimeout(timeout); // Cleanup on unmount or loading change
+  }, [loading]);
 
   const handleCanvasClick = (event) => {
     if (clickDisabled || timeLeft <= 0) return;
@@ -61,11 +74,10 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
       nextRound();
     }, 1250);
 
-    const reactionTime = lastRoundTime - (level > 1 ? timeLeft - 2 : timeLeft);
+    const reactionTime = timeLeft - (level > 1 ? timeLeft - 2 : timeLeft);
     const pointsEarned = calculateScore(reactionTime);
-    setScore((prevScore) => prevScore + pointsEarned);
-    setLastRoundTime(timeLeft);
 
+    setScore((prevScore) => prevScore + pointsEarned);
     setTimeLeft((prevTime) => Math.min(45, prevTime + 2));
     showFloatingText(pointsEarned, clickX, clickY, "#00ba00");
     showFloatingText("+2.0s", clickX, clickY + 30, "#ffc500");
@@ -81,16 +93,15 @@ function Canvas({ icons, setIsPaused, loading, timeLeft, setTimeLeft, nextRound,
   const showFloatingText = (text, x, y, color) => {
     const id = Math.random().toString(36).substr(2, 9);
     setFloatingTexts((prev) => [...prev, { id, text, x, y, color }]);
-
-    setTimeout(() => {
-      setFloatingTexts((prev) => prev.filter((item) => item.id !== id));
-    }, 1250); // Remove after animation
+    setTimeout(() => setFloatingTexts((prev) => prev.filter((item) => item.id !== id)), 1250);
   };
 
   if (loading)
     return (
-      <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
-        Loading...
+      <div className="canvas-border">
+        <div id="canvas" style={{ width: canvasSize, height: canvasSize }}>
+          {showLoadingText && "Loading..."}
+        </div>
       </div>
     );
 
